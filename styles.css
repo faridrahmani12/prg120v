@@ -143,3 +143,11 @@ tr:hover td {
 .nav-link span {
     margin-right: 6px;
 }
+
+.hero-script {
+    font-family: "Brush Script MT", "Segoe Script", cursive;
+    font-size: 28px;
+    color: #1e293b;
+    margin-bottom: 18px;
+    letter-spacing: 0.5px;
+}
