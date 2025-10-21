@@ -28,6 +28,13 @@ a:hover {
     margin-bottom: 24px;
 }
 
+.card .logo {
+    max-width: 240px;
+    width: 100%;
+    height: auto;
+    margin-bottom: 20px;
+}
+
 .card h1,
 .card h2 {
     margin-top: 0;
