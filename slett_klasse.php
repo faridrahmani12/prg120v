@@ -34,7 +34,7 @@ try {
 } catch (mysqli_sql_exception $e) {
     if ((int)$e->getCode() === 1451) {
         $_SESSION['flash'] = [
-            'msg' => 'Kan ikke slette klassen fordi det finnes studenter registrert i den. Slett eller flytt studentene først.',
+            'msg' => 'Kan ikke slette klassen fordi det finnes studenter registrert i den. Slett studentene først.',
             'class' => 'alert error'
         ];
     } else {
