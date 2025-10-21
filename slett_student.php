@@ -5,7 +5,13 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 
 require 'db.php';
 
-$bruker = trim($_GET['bruker'] ?? '');
+$bruker = trim(
+    $_GET['bruker']
+        ?? $_GET['slett']
+        ?? $_POST['bruker']
+        ?? $_POST['slett']
+        ?? ''
+);
 
 if ($bruker === '') {
     $_SESSION['flash'] = ['msg' => 'Ugyldig brukernavn for sletting.', 'class' => 'alert error'];

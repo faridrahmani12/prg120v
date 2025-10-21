@@ -5,7 +5,13 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 
 require 'db.php';
 
-$kode = trim($_GET['kode'] ?? '');
+$kode = trim(
+    $_GET['kode']
+        ?? $_GET['slett']
+        ?? $_POST['kode']
+        ?? $_POST['slett']
+        ?? ''
+);
 
 if ($kode === '') {
     $_SESSION['flash'] = ['msg' => 'Ugyldig kode for sletting.', 'class' => 'alert error'];
