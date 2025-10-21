@@ -6,6 +6,7 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <div class="background-image"></div>
   <div class="page">
     <div class="card">
       <h1>PRG120V – <span class="fancy-script">Administrasjon</span></h1>

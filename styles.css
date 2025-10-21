@@ -9,6 +9,21 @@ body {
     color: #1e293b;
 }
 
+.background-image {
+    position: fixed;
+    inset: 0;
+    background: url("https://upload.wikimedia.org/wikipedia/commons/8/80/Cristiano_Ronaldo_2018.jpg") center/cover no-repeat;
+    filter: brightness(0.6);
+    z-index: -2;
+}
+
+.background-image::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(130deg, rgba(224, 231, 255, 0.45) 0%, rgba(248, 250, 252, 0.65) 50%, rgba(226, 246, 255, 0.45) 100%);
+}
+
 a {
     color: #4c1d95;
     text-decoration: none;
@@ -22,6 +37,8 @@ a:hover {
     max-width: 900px;
     margin: 40px auto;
     padding: 0 20px;
+    position: relative;
+    z-index: 1;
 }
 
 .card {
