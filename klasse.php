@@ -1,63 +1,119 @@
 <?php
 include "db.php";
+
 $msg = "";
+$redigerKlasse = null;
 
-// Legg til ny klasse
-if(isset($_POST['lagre'])){
-    $kode = $conn->real_escape_string($_POST['kode']);
-    $navn = $conn->real_escape_string($_POST['navn']);
-    $studium = $conn->real_escape_string($_POST['studium']);
+function h(string $value): string {
+    return htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+}
 
-    if($kode == "" || $navn == ""){
-        $msg = "Fyll inn kode og navn.";
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $mode = $_POST['mode'] ?? '';
+    $kode = trim($_POST['kode'] ?? '');
+    $navn = trim($_POST['navn'] ?? '');
+    $studium = trim($_POST['studium'] ?? '');
+
+    if ($kode === '' || $navn === '') {
+        $msg = 'Fyll inn kode og navn.';
     } else {
-        $sql = "INSERT INTO klasse (klassekode, klassenavn, studiumkode) 
-                VALUES ('$kode', '$navn', '$studium')";
-        if($conn->query($sql)) $msg = "Klasse lagret!";
-        else $msg = "Feil: " . $conn->error;
+        $kodeDb = $conn->real_escape_string($kode);
+        $navnDb = $conn->real_escape_string($navn);
+        $studiumDb = $conn->real_escape_string($studium);
+
+        if ($mode === 'lagre') {
+            $sql = "INSERT INTO klasse (klassekode, klassenavn, studiumkode) VALUES ('$kodeDb', '$navnDb', '$studiumDb')";
+            if ($conn->query($sql)) {
+                $msg = 'Klasse lagret!';
+            } else {
+                $msg = 'Feil: ' . $conn->error;
+            }
+        } elseif ($mode === 'oppdater') {
+            $sql = "UPDATE klasse SET klassenavn='$navnDb', studiumkode='$studiumDb' WHERE klassekode='$kodeDb'";
+            if ($conn->query($sql)) {
+                $msg = 'Klasse oppdatert!';
+                unset($_GET['rediger']);
+            } else {
+                $msg = 'Feil ved oppdatering: ' . $conn->error;
+            }
+        }
     }
 }
 
-// Slett klasse
-if(isset($_GET['slett'])){
+if (isset($_GET['slett'])) {
     $kode = $conn->real_escape_string($_GET['slett']);
-    if($conn->query("DELETE FROM klasse WHERE klassekode='$kode'"))
-        $msg = "Klasse slettet!";
-    else
-        $msg = "Feil ved sletting: " . $conn->error;
+    if ($conn->query("DELETE FROM klasse WHERE klassekode='$kode'")) {
+        $msg = 'Klasse slettet!';
+    } else {
+        $msg = 'Feil ved sletting: ' . $conn->error;
+    }
 }
 
-// Hent alle klasser
-$klasser = $conn->query("SELECT * FROM klasse ORDER BY klassekode");
+if (isset($_GET['rediger'])) {
+    $kode = $conn->real_escape_string($_GET['rediger']);
+    $result = $conn->query("SELECT klassekode, klassenavn, studiumkode FROM klasse WHERE klassekode='$kode'");
+    if ($result && $result->num_rows === 1) {
+        $redigerKlasse = $result->fetch_assoc();
+    } else {
+        $msg = 'Fant ikke klassen som skulle redigeres.';
+    }
+}
+
+$klasser = [];
+$result = $conn->query("SELECT klassekode, klassenavn, studiumkode FROM klasse ORDER BY klassekode");
+while ($row = $result->fetch_assoc()) {
+    $klasser[] = $row;
+}
+
+$formOverskrift = $redigerKlasse ? 'Rediger klasse' : 'Ny klasse';
+$formMode = $redigerKlasse ? 'oppdater' : 'lagre';
+$kodeVerdi = $redigerKlasse['klassekode'] ?? '';
+$navnVerdi = $redigerKlasse['klassenavn'] ?? '';
+$studiumVerdi = $redigerKlasse['studiumkode'] ?? '';
 ?>
 <!DOCTYPE html>
 <html>
-<head><meta charset="utf-8"><title>Klasser</title></head>
+<head>
+    <meta charset="utf-8">
+    <title>Klasser</title>
+</head>
 <body>
 <h1>Administrer klasser</h1>
 <p><a href="index.php">← Til hovedsiden</a></p>
 
-<?php if($msg != "") echo "<p><strong>$msg</strong></p>"; ?>
+<?php if ($msg !== ''): ?>
+    <p><strong><?php echo h($msg); ?></strong></p>
+<?php endif; ?>
 
-<h2>Ny klasse</h2>
+<h2><?php echo h($formOverskrift); ?></h2>
 <form method="post">
-    Klassekode:<br><input type="text" name="kode" required><br>
-    Klassenavn:<br><input type="text" name="navn" required><br>
-    Studiumkode:<br><input type="text" name="studium" required><br><br>
-    <input type="submit" name="lagre" value="Lagre">
+    <input type="hidden" name="mode" value="<?php echo h($formMode); ?>">
+    Klassekode:<br>
+    <input type="text" name="kode" value="<?php echo h($kodeVerdi); ?>" <?php echo $redigerKlasse ? 'readonly' : ''; ?> required><br>
+    Klassenavn:<br>
+    <input type="text" name="navn" value="<?php echo h($navnVerdi); ?>" required><br>
+    Studiumkode:<br>
+    <input type="text" name="studium" value="<?php echo h($studiumVerdi); ?>" required><br><br>
+    <input type="submit" value="<?php echo $redigerKlasse ? 'Oppdater' : 'Lagre'; ?>">
+    <?php if ($redigerKlasse): ?>
+        <a href="klasse.php">Avbryt redigering</a>
+    <?php endif; ?>
 </form>
 
 <h2>Alle klasser</h2>
 <table border="1" cellpadding="4">
-<tr><th>Kode</th><th>Navn</th><th>Studium</th><th>Slett</th></tr>
-<?php while($row = $klasser->fetch_assoc()): ?>
-<tr>
-    <td><?php echo $row['klassekode']; ?></td>
-    <td><?php echo $row['klassenavn']; ?></td>
-    <td><?php echo $row['studiumkode']; ?></td>
-    <td><a href="?slett=<?php echo $row['klassekode']; ?>" onclick="return confirm('Slette?')">Slett</a></td>
-</tr>
-<?php endwhile; ?>
+    <tr><th>Kode</th><th>Navn</th><th>Studium</th><th>Handlinger</th></tr>
+    <?php foreach ($klasser as $row): ?>
+        <tr>
+            <td><?php echo h($row['klassekode']); ?></td>
+            <td><?php echo h($row['klassenavn']); ?></td>
+            <td><?php echo h($row['studiumkode']); ?></td>
+            <td>
+                <a href="?rediger=<?php echo urlencode($row['klassekode']); ?>">Rediger</a> |
+                <a href="?slett=<?php echo urlencode($row['klassekode']); ?>" onclick="return confirm('Slette denne klassen?');">Slett</a>
+            </td>
+        </tr>
+    <?php endforeach; ?>
 </table>
 </body>
 </html>

@@ -1,13 +1,22 @@
 <?php
-$host = "farah6535";
-$user = "farah6535";      // standard for XAMPP
-$pass = "a999farah6535";          // passord, sett hvis du har ett
-$db   = "farah6535";     // databasen vi lagde
+require_once __DIR__ . '/config.php';
 
-$conn = new mysqli($host, $user, $pass, $db);
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
-if ($conn->connect_error) {
-    die("Tilkoblingsfeil: " . $conn->connect_error);
+$config = dbConfig();
+
+try {
+    $conn = new mysqli(
+        $config['host'],
+        $config['user'],
+        $config['pass'],
+        $config['name'],
+        $config['port']
+    );
+    $conn->set_charset("utf8mb4");
+} catch (mysqli_sql_exception $e) {
+    $friendly = "Tilkoblingsfeil: " . $e->getMessage() .
+        ". Kontroller databasedetaljene i config.php eller miljøvariabler, eller kjør setup_db.php.";
+    die($friendly);
 }
-$conn->set_charset("utf8mb4");
 ?>
