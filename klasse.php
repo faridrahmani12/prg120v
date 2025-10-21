@@ -146,19 +146,31 @@ $formMode = $redigerKlasse ? 'oppdater' : 'lagre';
             <p>Ingen klasser funnet ennå.</p>
         <?php else: ?>
             <table>
-                <tr><th>Kode</th><th>Navn</th><th>Studium</th><th>Handlinger</th></tr>
+                <tr><th>Kode</th><th>Navn</th><th>Studium</th></tr>
                 <?php foreach ($klasser as $row): ?>
                     <tr>
                         <td><?php echo h($row['klassekode']); ?></td>
                         <td><?php echo h($row['klassenavn']); ?></td>
                         <td><?php echo h($row['studiumkode']); ?></td>
-                        <td class="actions">
-                            <a href="?rediger=<?php echo urlencode($row['klassekode']); ?>">Rediger</a>
-                            <a href="slett_klasse.php?kode=<?php echo urlencode($row['klassekode']); ?>" onclick="return confirm('Slette denne klassen?');">Slett</a>
-                        </td>
                     </tr>
                 <?php endforeach; ?>
             </table>
+        <?php endif; ?>
+
+        <?php if (count($klasser) > 0): ?>
+            <form class="delete-form" method="post" action="slett_klasse.php" onsubmit="return confirm('Slette valgt klasse?');">
+                <div class="field">
+                    <label for="slett-klasse">Velg klasse som skal slettes</label>
+                    <select id="slett-klasse" name="kode">
+                        <?php foreach ($klasser as $row): ?>
+                            <option value="<?php echo h($row['klassekode']); ?>">
+                                <?php echo h($row['klassekode'] . ' - ' . $row['klassenavn']); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <button type="submit">Slett klasse</button>
+            </form>
         <?php endif; ?>
     </div>
 </div>

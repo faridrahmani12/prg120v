@@ -172,20 +172,32 @@ $formOverskrift = $redigerStudent ? 'Rediger student' : 'Ny student';
             <p>Ingen studenter registrert ennå.</p>
         <?php else: ?>
             <table>
-                <tr><th>Brukernavn</th><th>Fornavn</th><th>Etternavn</th><th>Klasse</th><th>Handlinger</th></tr>
+                <tr><th>Brukernavn</th><th>Fornavn</th><th>Etternavn</th><th>Klasse</th></tr>
                 <?php foreach ($studenter as $rad): ?>
                     <tr>
                         <td><?php echo h($rad['brukernavn']); ?></td>
                         <td><?php echo h($rad['fornavn']); ?></td>
                         <td><?php echo h($rad['etternavn']); ?></td>
                         <td><?php echo h(trim($rad['klassekode'] . ' ' . ($rad['klassenavn'] ?? ''))); ?></td>
-                        <td class="actions">
-                            <a href="?rediger=<?php echo urlencode($rad['brukernavn']); ?>">Rediger</a>
-                            <a href="slett_student.php?bruker=<?php echo urlencode($rad['brukernavn']); ?>" onclick="return confirm('Slette denne studenten?');">Slett</a>
-                        </td>
                     </tr>
                 <?php endforeach; ?>
             </table>
+        <?php endif; ?>
+
+        <?php if (count($studenter) > 0): ?>
+            <form class="delete-form" method="post" action="slett_student.php" onsubmit="return confirm('Slette valgt student?');">
+                <div class="field">
+                    <label for="slett-student">Velg student som skal slettes</label>
+                    <select id="slett-student" name="bruker">
+                        <?php foreach ($studenter as $rad): ?>
+                            <option value="<?php echo h($rad['brukernavn']); ?>">
+                                <?php echo h($rad['brukernavn'] . ' - ' . $rad['fornavn'] . ' ' . $rad['etternavn']); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <button type="submit">Slett student</button>
+            </form>
         <?php endif; ?>
     </div>
 </div>
