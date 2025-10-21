@@ -1,13 +1,23 @@
 <?php
-include "db.php";
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_start();
+}
 
-$msg = "";
-$alertClass = "alert";
-$redigerKlasse = null;
+include "db.php";
 
 function h(string $value): string {
     return htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
 }
+
+$msg = '';
+$alertClass = 'alert';
+if (!empty($_SESSION['flash'])) {
+    $msg = $_SESSION['flash']['msg'] ?? '';
+    $alertClass = $_SESSION['flash']['class'] ?? 'alert';
+    unset($_SESSION['flash']);
+}
+
+$redigerKlasse = null;
 
 $kodeInput = trim($_POST['kode'] ?? '');
 $navnInput = trim($_POST['navn'] ?? '');
@@ -25,52 +35,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt = $conn->prepare("UPDATE klasse SET klassenavn = ?, studiumkode = ? WHERE klassekode = ?");
                 $stmt->bind_param('sss', $navnInput, $studiumInput, $kodeInput);
                 $stmt->execute();
-                if ($stmt->affected_rows > 0) {
-                    $msg = 'Klasse oppdatert!';
-                } else {
-                    $msg = 'Ingen endringer ble lagret (finnes klassen?).';
-                    $alertClass = 'alert error';
-                }
                 $stmt->close();
-                $redigerKlasse = null;
-                unset($_GET['rediger']);
-                $kodeInput = $navnInput = $studiumInput = '';
+                $_SESSION['flash'] = ['msg' => 'Klasse oppdatert!', 'class' => 'alert'];
             } else {
                 $stmt = $conn->prepare("INSERT INTO klasse (klassekode, klassenavn, studiumkode) VALUES (?, ?, ?)");
                 $stmt->bind_param('sss', $kodeInput, $navnInput, $studiumInput);
                 $stmt->execute();
                 $stmt->close();
-                $msg = 'Klasse lagret!';
-                $kodeInput = $navnInput = $studiumInput = '';
+                $_SESSION['flash'] = ['msg' => 'Klasse lagret!', 'class' => 'alert'];
             }
-            $alertClass = 'alert';
+            header('Location: klasse.php');
+            exit;
         } catch (mysqli_sql_exception $e) {
-            $msg = 'Feil: ' . $e->getMessage();
-            $alertClass = 'alert error';
+            $_SESSION['flash'] = ['msg' => 'Feil: ' . $e->getMessage(), 'class' => 'alert error'];
+            header('Location: klasse.php');
+            exit;
         }
     }
 }
 
 if (isset($_GET['slett'])) {
     $kode = trim($_GET['slett']);
-    if ($kode !== '') {
+    if ($kode === '') {
+        $_SESSION['flash'] = ['msg' => 'Ugyldig kode for sletting.', 'class' => 'alert error'];
+    } else {
         try {
             $stmt = $conn->prepare("DELETE FROM klasse WHERE klassekode = ?");
             $stmt->bind_param('s', $kode);
             $stmt->execute();
             if ($stmt->affected_rows > 0) {
-                $msg = 'Klasse slettet!';
-                $alertClass = 'alert';
+                $_SESSION['flash'] = ['msg' => 'Klasse slettet!', 'class' => 'alert'];
             } else {
-                $msg = 'Fant ingen klasse med den gitte kode.';
-                $alertClass = 'alert error';
+                $_SESSION['flash'] = ['msg' => 'Fant ingen klasse med den gitte kode.', 'class' => 'alert error'];
             }
             $stmt->close();
         } catch (mysqli_sql_exception $e) {
-            $msg = 'Feil ved sletting: ' . $e->getMessage();
-            $alertClass = 'alert error';
+            $_SESSION['flash'] = ['msg' => 'Feil ved sletting: ' . $e->getMessage(), 'class' => 'alert error'];
         }
     }
+    header('Location: klasse.php');
+    exit;
 }
 
 if (isset($_GET['rediger'])) {
@@ -118,7 +122,7 @@ $formMode = $redigerKlasse ? 'oppdater' : 'lagre';
         <p>Registrer, oppdater eller slett klassene i studiet.</p>
 
         <?php if ($msg !== ''): ?>
-            <div class="<?= h($alertClass) ?>"><?php echo h($msg); ?></div>
+            <div class="<?php echo h($alertClass); ?>"><?php echo h($msg); ?></div>
         <?php endif; ?>
 
         <h2><?php echo h($redigerKlasse ? 'Rediger klasse' : 'Ny klasse'); ?></h2>

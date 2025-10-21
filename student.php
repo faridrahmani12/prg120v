@@ -1,13 +1,23 @@
 <?php
-include "db.php";
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_start();
+}
 
-$msg = "";
-$alertClass = 'alert';
-$redigerStudent = null;
+include "db.php";
 
 function h(string $value): string {
     return htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
 }
+
+$msg = '';
+$alertClass = 'alert';
+if (!empty($_SESSION['flash'])) {
+    $msg = $_SESSION['flash']['msg'] ?? '';
+    $alertClass = $_SESSION['flash']['class'] ?? 'alert';
+    unset($_SESSION['flash']);
+}
+
+$redigerStudent = null;
 
 $mode = $_POST['mode'] ?? 'lagre';
 $brukerInput = trim($_POST['bruker'] ?? '');
@@ -25,54 +35,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt = $conn->prepare("UPDATE student SET fornavn = ?, etternavn = ?, klassekode = ? WHERE brukernavn = ?");
                 $stmt->bind_param('ssss', $fornavnInput, $etternavnInput, $klasseInput, $brukerInput);
                 $stmt->execute();
-                if ($stmt->affected_rows > 0) {
-                    $msg = 'Student oppdatert!';
-                } else {
-                    $msg = 'Ingen endringer ble lagret (finnes studenten?).';
-                    $alertClass = 'alert error';
-                }
                 $stmt->close();
-                unset($_GET['rediger']);
-                $redigerStudent = null;
-                $brukerInput = $fornavnInput = $etternavnInput = '';
-                $klasseInput = '';
+                $_SESSION['flash'] = ['msg' => 'Student oppdatert!', 'class' => 'alert'];
             } else {
                 $stmt = $conn->prepare("INSERT INTO student (brukernavn, fornavn, etternavn, klassekode) VALUES (?, ?, ?, ?)");
                 $stmt->bind_param('ssss', $brukerInput, $fornavnInput, $etternavnInput, $klasseInput);
                 $stmt->execute();
                 $stmt->close();
-                $msg = 'Student lagret!';
-                $brukerInput = $fornavnInput = $etternavnInput = '';
-                $klasseInput = '';
+                $_SESSION['flash'] = ['msg' => 'Student lagret!', 'class' => 'alert'];
             }
-            $alertClass = 'alert';
+            header('Location: student.php');
+            exit;
         } catch (mysqli_sql_exception $e) {
-            $msg = 'Feil: ' . $e->getMessage();
-            $alertClass = 'alert error';
+            $_SESSION['flash'] = ['msg' => 'Feil: ' . $e->getMessage(), 'class' => 'alert error'];
+            header('Location: student.php');
+            exit;
         }
     }
 }
 
 if (isset($_GET['slett'])) {
     $bruker = trim($_GET['slett']);
-    if ($bruker !== '') {
+    if ($bruker === '') {
+        $_SESSION['flash'] = ['msg' => 'Ugyldig brukernavn for sletting.', 'class' => 'alert error'];
+    } else {
         try {
             $stmt = $conn->prepare("DELETE FROM student WHERE brukernavn = ?");
             $stmt->bind_param('s', $bruker);
             $stmt->execute();
             if ($stmt->affected_rows > 0) {
-                $msg = 'Student slettet!';
-                $alertClass = 'alert';
+                $_SESSION['flash'] = ['msg' => 'Student slettet!', 'class' => 'alert'];
             } else {
-                $msg = 'Fant ingen student med det brukernavnet.';
-                $alertClass = 'alert error';
+                $_SESSION['flash'] = ['msg' => 'Fant ingen student med det brukernavnet.', 'class' => 'alert error'];
             }
             $stmt->close();
         } catch (mysqli_sql_exception $e) {
-            $msg = 'Feil ved sletting: ' . $e->getMessage();
-            $alertClass = 'alert error';
+            $_SESSION['flash'] = ['msg' => 'Feil ved sletting: ' . $e->getMessage(), 'class' => 'alert error'];
         }
     }
+    header('Location: student.php');
+    exit;
 }
 
 if (isset($_GET['rediger'])) {
@@ -135,7 +137,7 @@ $formOverskrift = $redigerStudent ? 'Rediger student' : 'Ny student';
         <p>Registrer nye studenter, rediger informasjon, eller slett registreringer.</p>
 
         <?php if ($msg !== ''): ?>
-            <div class="<?= h($alertClass) ?>"><?php echo h($msg); ?></div>
+            <div class="<?php echo h($alertClass); ?>"><?php echo h($msg); ?></div>
         <?php endif; ?>
 
         <h2><?php echo h($formOverskrift); ?></h2>
