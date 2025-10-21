@@ -11,7 +11,7 @@ if(isset($_POST['lagre'])){
     if($kode == "" || $navn == ""){
         $msg = "Fyll inn kode og navn.";
     } else {
-        $sql = "INSERT INTO klasse (klassekode, klasssenavn, studiumkode) 
+        $sql = "INSERT INTO klasse (klassekode, klassenavn, studiumkode) 
                 VALUES ('$kode', '$navn', '$studium')";
         if($conn->query($sql)) $msg = "Klasse lagret!";
         else $msg = "Feil: " . $conn->error;
@@ -53,7 +53,7 @@ $klasser = $conn->query("SELECT * FROM klasse ORDER BY klassekode");
 <?php while($row = $klasser->fetch_assoc()): ?>
 <tr>
     <td><?php echo $row['klassekode']; ?></td>
-    <td><?php echo $row['klasssenavn']; ?></td>
+    <td><?php echo $row['klassenavn']; ?></td>
     <td><?php echo $row['studiumkode']; ?></td>
     <td><a href="?slett=<?php echo $row['klassekode']; ?>" onclick="return confirm('Slette?')">Slett</a></td>
 </tr>

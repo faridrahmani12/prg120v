@@ -29,11 +29,11 @@ if(isset($_GET['slett'])){
 }
 
 // Hent klasser til listeboks
-$klasser = $conn->query("SELECT klassekode, klasssenavn FROM klasse ORDER BY klassekode");
+$klasser = $conn->query("SELECT klassekode, klassenavn FROM klasse ORDER BY klassekode");
 
 // Hent alle studenter med klassenavn
 $studenter = $conn->query("
-    SELECT s.brukernavn, s.fornavn, s.etternavn, s.klassekode, k.klasssenavn
+    SELECT s.brukernavn, s.fornavn, s.etternavn, s.klassekode, k.klassenavn
     FROM student s
     LEFT JOIN klasse k ON s.klassekode = k.klassekode
     ORDER BY s.brukernavn
@@ -57,7 +57,7 @@ Klasse:<br>
 <select name="klasse">
 <?php while($k = $klasser->fetch_assoc()): ?>
     <option value="<?php echo $k['klassekode']; ?>">
-        <?php echo $k['klassekode'] . " - " . $k['klasssenavn']; ?>
+        <?php echo $k['klassekode'] . " - " . $k['klassenavn']; ?>
     </option>
 <?php endwhile; ?>
 </select><br><br>
@@ -72,7 +72,7 @@ Klasse:<br>
 <td><?php echo $r['brukernavn']; ?></td>
 <td><?php echo $r['fornavn']; ?></td>
 <td><?php echo $r['etternavn']; ?></td>
-<td><?php echo $r['klassekode'] . " " . $r['klasssenavn']; ?></td>
+<td><?php echo $r['klassekode'] . " " . $r['klassenavn']; ?></td>
 <td><a href="?slett=<?php echo $r['brukernavn']; ?>" onclick="return confirm('Slette?')">Slett</a></td>
 </tr>
 <?php endwhile; ?>
