@@ -163,9 +163,10 @@ tr:hover td {
 }
 
 .hero-script {
-    font-family: "Brush Script MT", "Segoe Script", cursive;
-    font-size: 28px;
+    font-family: "Times New Roman", Times, serif;
+    font-size: 20px;
+    font-style: normal;
     color: #1e293b;
     margin-bottom: 18px;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.3px;
 }
