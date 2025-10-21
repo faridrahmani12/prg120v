@@ -8,7 +8,7 @@
 <body>
   <div class="page">
     <div class="card">
-      <h1>PRG120V – Administrasjon</h1>
+      <h1>PRG120V – <span class="fancy-script">Administrasjon</span></h1>
       <p class="hero-script">velkommen til min besvarelse av obligatorisk arbeidskrav</p>
       <p>Velkommen! Velg hva du vil vedlikeholde.</p>
       <ul>

@@ -151,3 +151,9 @@ tr:hover td {
     margin-bottom: 18px;
     letter-spacing: 0.5px;
 }
+
+.fancy-script {
+    font-family: "Brush Script MT", "Segoe Script", cursive;
+    font-weight: 500;
+    letter-spacing: 1px;
+}
