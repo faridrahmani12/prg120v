@@ -23,6 +23,18 @@ $kodeInput = trim($_POST['kode'] ?? '');
 $navnInput = trim($_POST['navn'] ?? '');
 $studiumInput = trim($_POST['studium'] ?? '');
 
+if (isset($_GET['slett'])) {
+    $slettParam = trim($_GET['slett']);
+    if ($slettParam === '') {
+        $_SESSION['flash'] = ['msg' => 'Ugyldig kode for sletting.', 'class' => 'alert error'];
+        header('Location: klasse.php');
+        exit;
+    }
+
+    header('Location: slett_klasse.php?kode=' . urlencode($slettParam));
+    exit;
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $mode = $_POST['mode'] ?? 'lagre';
 

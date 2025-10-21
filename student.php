@@ -25,6 +25,18 @@ $fornavnInput = trim($_POST['fornavn'] ?? '');
 $etternavnInput = trim($_POST['etternavn'] ?? '');
 $klasseInput = trim($_POST['klasse'] ?? '');
 
+if (isset($_GET['slett'])) {
+    $slettParam = trim($_GET['slett']);
+    if ($slettParam === '') {
+        $_SESSION['flash'] = ['msg' => 'Ugyldig brukernavn for sletting.', 'class' => 'alert error'];
+        header('Location: student.php');
+        exit;
+    }
+
+    header('Location: slett_student.php?bruker=' . urlencode($slettParam));
+    exit;
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($brukerInput === '' || $fornavnInput === '' || $klasseInput === '') {
         $msg = 'Fyll inn brukernavn, fornavn og klasse.';
