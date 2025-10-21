@@ -54,29 +54,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-if (isset($_GET['slett'])) {
-    $kode = trim($_GET['slett']);
-    if ($kode === '') {
-        $_SESSION['flash'] = ['msg' => 'Ugyldig kode for sletting.', 'class' => 'alert error'];
-    } else {
-        try {
-            $stmt = $conn->prepare("DELETE FROM klasse WHERE klassekode = ?");
-            $stmt->bind_param('s', $kode);
-            $stmt->execute();
-            if ($stmt->affected_rows > 0) {
-                $_SESSION['flash'] = ['msg' => 'Klasse slettet!', 'class' => 'alert'];
-            } else {
-                $_SESSION['flash'] = ['msg' => 'Fant ingen klasse med den gitte kode.', 'class' => 'alert error'];
-            }
-            $stmt->close();
-        } catch (mysqli_sql_exception $e) {
-            $_SESSION['flash'] = ['msg' => 'Feil ved sletting: ' . $e->getMessage(), 'class' => 'alert error'];
-        }
-    }
-    header('Location: klasse.php');
-    exit;
-}
-
 if (isset($_GET['rediger'])) {
     $kode = trim($_GET['rediger']);
     if ($kode !== '') {
@@ -165,7 +142,7 @@ $formMode = $redigerKlasse ? 'oppdater' : 'lagre';
                         <td><?php echo h($row['studiumkode']); ?></td>
                         <td class="actions">
                             <a href="?rediger=<?php echo urlencode($row['klassekode']); ?>">Rediger</a>
-                            <a href="?slett=<?php echo urlencode($row['klassekode']); ?>" onclick="return confirm('Slette denne klassen?');">Slett</a>
+                            <a href="slett_klasse.php?kode=<?php echo urlencode($row['klassekode']); ?>" onclick="return confirm('Slette denne klassen?');">Slett</a>
                         </td>
                     </tr>
                 <?php endforeach; ?>

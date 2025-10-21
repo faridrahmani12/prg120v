@@ -54,29 +54,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-if (isset($_GET['slett'])) {
-    $bruker = trim($_GET['slett']);
-    if ($bruker === '') {
-        $_SESSION['flash'] = ['msg' => 'Ugyldig brukernavn for sletting.', 'class' => 'alert error'];
-    } else {
-        try {
-            $stmt = $conn->prepare("DELETE FROM student WHERE brukernavn = ?");
-            $stmt->bind_param('s', $bruker);
-            $stmt->execute();
-            if ($stmt->affected_rows > 0) {
-                $_SESSION['flash'] = ['msg' => 'Student slettet!', 'class' => 'alert'];
-            } else {
-                $_SESSION['flash'] = ['msg' => 'Fant ingen student med det brukernavnet.', 'class' => 'alert error'];
-            }
-            $stmt->close();
-        } catch (mysqli_sql_exception $e) {
-            $_SESSION['flash'] = ['msg' => 'Feil ved sletting: ' . $e->getMessage(), 'class' => 'alert error'];
-        }
-    }
-    header('Location: student.php');
-    exit;
-}
-
 if (isset($_GET['rediger'])) {
     $bruker = trim($_GET['rediger']);
     if ($bruker !== '') {
@@ -192,7 +169,7 @@ $formOverskrift = $redigerStudent ? 'Rediger student' : 'Ny student';
                         <td><?php echo h(trim($rad['klassekode'] . ' ' . ($rad['klassenavn'] ?? ''))); ?></td>
                         <td class="actions">
                             <a href="?rediger=<?php echo urlencode($rad['brukernavn']); ?>">Rediger</a>
-                            <a href="?slett=<?php echo urlencode($rad['brukernavn']); ?>" onclick="return confirm('Slette denne studenten?');">Slett</a>
+                            <a href="slett_student.php?bruker=<?php echo urlencode($rad['brukernavn']); ?>" onclick="return confirm('Slette denne studenten?');">Slett</a>
                         </td>
                     </tr>
                 <?php endforeach; ?>
