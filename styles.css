@@ -1,0 +1,144 @@
+body {
+    margin: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: #f4f6fb;
+    color: #1f2933;
+}
+
+a {
+    color: #2563eb;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+.page {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.card {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+    padding: 24px 28px;
+    margin-bottom: 24px;
+}
+
+.card h1,
+.card h2 {
+    margin-top: 0;
+}
+
+form .field {
+    margin-bottom: 16px;
+}
+
+label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+input[type="text"],
+select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 15px;
+    box-sizing: border-box;
+}
+
+input[type="submit"],
+.button {
+    display: inline-block;
+    background: #2563eb;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 18px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+input[type="submit"]:hover,
+.button:hover {
+    background: #1d4ed8;
+}
+
+.muted-link {
+    margin-left: 16px;
+    font-size: 14px;
+    color: #64748b;
+}
+
+.muted-link:hover {
+    color: #475569;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 12px;
+    font-size: 15px;
+}
+
+th,
+td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #e2e8f0;
+    text-align: left;
+}
+
+th {
+    background: #f1f5f9;
+    font-weight: 600;
+}
+
+tr:hover td {
+    background: #f8fafc;
+}
+
+.page ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.page ul li {
+    margin-bottom: 12px;
+}
+
+.actions a {
+    margin-right: 12px;
+}
+
+.alert {
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    background: #ecfdf5;
+    color: #047857;
+}
+
+.alert.error {
+    background: #fef2f2;
+    color: #b91c1c;
+}
+
+.nav-link {
+    display: inline-flex;
+    align-items: center;
+    font-weight: 600;
+    margin-bottom: 16px;
+}
+
+.nav-link span {
+    margin-right: 6px;
+}

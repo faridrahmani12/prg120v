@@ -1,14 +1,20 @@
 <!DOCTYPE html>
-<html>
+<html lang="no">
 <head>
   <meta charset="utf-8">
-  <title>Hovedside</title>
+  <title>Administrasjon</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <h1>Velkommen! Velg hva du vil gjøre:</h1>
-  <ul>
-    <li><a href="klasse.php">Administrer klasser</a></li>
-    <li><a href="student.php">Administrer studenter</a></li>
-  </ul>
+  <div class="page">
+    <div class="card">
+      <h1>PRG120V – Administrasjon</h1>
+      <p>Velkommen! Velg hva du vil vedlikeholde.</p>
+      <ul>
+        <li><a class="button" href="klasse.php">Administrer klasser</a></li>
+        <li><a class="button" href="student.php">Administrer studenter</a></li>
+      </ul>
+    </div>
+  </div>
 </body>
 </html>

@@ -100,18 +100,24 @@ $messages[] = "Eksempelstudenter er lagt inn/oppdatert.";
 $serverConn->close();
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="no">
 <head>
     <meta charset="utf-8">
     <title>Databaseoppsett</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<h1>Databaseoppsett fullført</h1>
-<ul>
-    <?php foreach ($messages as $message): ?>
-        <li><?php echo htmlspecialchars($message, ENT_QUOTES, 'UTF-8'); ?></li>
-    <?php endforeach; ?>
-</ul>
-<p><a href="index.php">Tilbake til hovedsiden</a></p>
+<div class="page">
+    <div class="card">
+        <h1>Databaseoppsett</h1>
+        <p>Resultat fra siste kjøring av oppsettsskriptet:</p>
+        <ul>
+            <?php foreach ($messages as $message): ?>
+                <li><?php echo htmlspecialchars($message, ENT_QUOTES, 'UTF-8'); ?></li>
+            <?php endforeach; ?>
+        </ul>
+        <p><a class="button" href="index.php">Tilbake til hovedsiden</a></p>
+    </div>
+</div>
 </body>
 </html>
