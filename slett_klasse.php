@@ -32,7 +32,14 @@ try {
 
     $stmt->close();
 } catch (mysqli_sql_exception $e) {
-    $_SESSION['flash'] = ['msg' => 'Feil ved sletting: ' . $e->getMessage(), 'class' => 'alert error'];
+    if ((int)$e->getCode() === 1451) {
+        $_SESSION['flash'] = [
+            'msg' => 'Kan ikke slette klassen fordi det finnes studenter registrert i den. Slett eller flytt studentene først.',
+            'class' => 'alert error'
+        ];
+    } else {
+        $_SESSION['flash'] = ['msg' => 'Feil ved sletting: ' . $e->getMessage(), 'class' => 'alert error'];
+    }
 }
 
 header('Location: klasse.php');
