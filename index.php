@@ -5,7 +5,7 @@
   <title>Administrasjon</title>
   <link rel="stylesheet" href="styles.css">
 </head>
-<body class="landing">
+<body>
   <div class="background-image"></div>
   <div class="page">
     <div class="card">
